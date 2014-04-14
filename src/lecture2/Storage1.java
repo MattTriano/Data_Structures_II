@@ -17,18 +17,18 @@ public class Storage1 {
 		this.items = new Item1[N];
 		this.nitems = 0;
 	}
+	
 	void put(Item1 item) {
 		Item1 tmp;
-		this.nitems[this.nitems] = item;
-		for(int k = this.nitems; k>0;k--) {
-			if(this.nitems[k-1].key>this.nitems[k].key) {
-				tmp = this.nitems[k-1];
-				this.nitems[k-1] = this.nitems[k];
-				this.nitems[k] = tmp;
-			} else 	break;
+		items[nitems] = item;
+		for(int k = nitems; k>0;k--) {
+			if(items[k-1].key.compareTo(items[k].key)>0) {
+				tmp = items[k-1];
+				items[k-1] = items[k];
+				items[k] = tmp;
+			} else break;
 		}
-		this.nitems[this.nitems] = item;
-		this.nitems++;
+		nitems++;
 	}
 	
 	int search(String key) {
@@ -61,9 +61,12 @@ public class Storage1 {
 	
 	boolean delete(String key) {
 		int k = search(key);
-		if(k>= 0 && k!=nitems-1)
-			this.items[k] = this.items[nitems-1];
-		nitems--;
+		if(k>= 0) {
+			for (int i=k+1; i<nitems; i++) 
+				items[k-1] = items[k];
+			items[nitems-1] = null;
+			nitems--;
+		}
 		return (k>=0);
 	}
 	
