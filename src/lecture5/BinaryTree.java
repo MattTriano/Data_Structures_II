@@ -1,8 +1,7 @@
 package lecture5;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 class Item {
@@ -74,6 +73,7 @@ class Node {
 				this.left.store(item);
 		}
 	}
+	
 	public Double sumBST() {
 		Node n = this;
 		Double _sum = 0.0;
@@ -96,28 +96,73 @@ class Node {
 		return _sum;
 	}
 	
+	public int diameter(){	
+	    int lheight=0, rheight=0, ldiameter=0, rdiameter=0;
+	    
+		if (this.left != null){
+	    	lheight = this.left.height();
+	    	ldiameter = this.left.diameter();
+		}
+		if (this.right  != null) {
+			rheight = this.right.height();
+	    	rdiameter = this.right.diameter();
+		}
+	    return Math.max(lheight + rheight + 1, Math.max(ldiameter, rdiameter));	    
+}
+
+	public int height(){
+		int lheight=0, rheight=0;
+	    if(this.left != null) lheight = this.left.height();
+		if(this.right != null) rheight = this.right.height();
+	    return 1 + Math.max(lheight, rheight);
+	}
+	
 	public void inorder_traversal() {
 		if(this.left!=null)
 			this.left.inorder_traversal();
-		System.out.println(this.item.key);
+		System.out.println(this.item.value);
 		if(this.right!=null)
 			this.right.inorder_traversal();
 	}
+	
+	@Override
+	public String toString() {
+		return this.item.key + " " + this.item.value;
+	}
+	
+	public void byLevel(){
+		Node root = this;
+		Queue<Node> level  = new LinkedList<Node>();
+		level.add(root);
+		int rowWidth = 1;
+		int newRowWidth = 0;
+		while(!level.isEmpty()){
+			Node node = level.poll();
+			if(node.left!= null){
+				level.add(node.left);
+				newRowWidth +=1;
+			}
+			if(node.right!= null){
+				level.add(node.right);
+				newRowWidth +=1;
+			}
+			System.out.print(node + " ");
+			rowWidth--;
+			if(rowWidth == 0) {
+				rowWidth = newRowWidth;
+				newRowWidth = 0;
+				System.out.println();
+			}
+		}
+	}
+	
+	
 }
 
 public class BinaryTree {
 	Node root;
 	BinaryTree() {
 		root = null;
-	}
-	
-	public static BinaryTree fromMap(Map<String, String> map) {
-		BinaryTree bt = new BinaryTree();
-		for(Entry<String, String> entry : map.entrySet()) {
-			bt.store(entry.getKey(), entry.getValue());
-		}
-		
-		return bt;
 	}
 	
 	public Double sum() {
@@ -129,7 +174,7 @@ public class BinaryTree {
 	}
 	
 	void store(String key, String value) {
-		Item item = new Item(key,value);
+		Item item = new Item(value,key);
 		if(root==null)
 			root = new Node(item,null,null,null);
 		else root.store(item);
@@ -150,25 +195,32 @@ public class BinaryTree {
 	public static void main(String[] args) {
 
 		BinaryTree s = new BinaryTree();
-		Map<String, String> mp = new HashMap<String, String>();
 		
-		mp.put("x", "0.0");
-		mp.put("y", "3.0");
-		mp.put("z", "2.0");
-		mp.put("w", "1.0");
-		BinaryTree mpt = BinaryTree.fromMap(mp);
-		System.out.println("The sum for the mpt BST is " + mpt.sum());
+		s.store("A", "20");
+		s.store("B", "5");
+		s.store("C", "90");
+		s.store("D", "568");
+		s.store("E", "230");
+		s.store("F", "2730");
+		s.store("G", "3230");
+		s.store("H", "250");
+		s.store("I", "223");
+		s.store("J", "273");
+		s.store("K", "263");
+		s.store("L", "423");
+		s.store("M", "123");
+		s.store("N", "293");
 		
 		
-		s.store("Max", "20");
-		s.store("Alex", "5");
-		s.store("Tim", "90");
-		s.store("John", "568");
-		s.store("Nate", "230");
-		Double sum = s.sum();
-		Double sqSum = s.root.sumSquaresBST();
-		System.out.println("The sum for the BST is " + sum);
-		System.out.println("The sum of squares for the BST is " + sqSum);
+		
+		//Double sum = s.sum();
+		//Double sqSum = s.root.sumSquaresBST();
+		//int maxDisp = s.root.diameter();
+		//System.out.println("The sum for the BST is " + sum);
+//		System.out.println("The sum of squares for the BST is " + sqSum);
+//		System.out.println("The diameter of this tree is " + maxDisp);
+		s.root.inorder_traversal();
+		s.root.byLevel();
 	}
 }
 
