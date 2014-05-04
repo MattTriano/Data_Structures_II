@@ -7,77 +7,95 @@ class Item {
 	String key;
 	String value;
 	Item(String key, String value) {
-		this.key = key;
+		this.key =  key;
 		this.value = value;
 	}
 }
 
+class Node {
+	Item item;
+	Node prev;
+	Node next;
+	Node(Item item, Node prev, Node next) {
+		this.item = item;
+		this.prev = prev;
+		this.next = next;
+	}
+}
+
 public class Storage {
-	private Item[] items;
-	private int nitems;
-	Storage(int N) {
-		this.items = new Item[N];
-		this.nitems = 0;
+	private Node start;
+	private int nnodes;
+	Storage() {
+		this.start = null;
+		this.nnodes = 0;
 	}
 	void put(Item item) {
-		this.items[this.nitems] = item;
-		this.nitems++;
+		this.start = new Node(item,null,this.start);
+		this.nnodes++;
 	}
-	
-	int search(String key) {
-		for(int k=0; k<this.size(); k++){
-			if(this.items[k].key == key) {
-				return k;
-			}
+	Node search(String key) {
+		Node p = start;
+		while(p!=null) {
+			if(p.item.key == key) 
+				return p;
+			p = p.next;
 		}
-		return -1;
-	}
-	
-	boolean has(String key) {
-		return search(key) >= 0;
-	}
-	
-	String get(String key) {
-		int k = search(key);
-		if(k>=0) 
-			return this.items[k].value;
 		return null;
 	}
-	
+	boolean has(String key) {
+		return search(key)!=null;
+	}
+	String get(String key) {
+		Node p = search(key);
+		if(p!=null) 
+			return p.item.value;
+		return null;
+	}
 	boolean delete(String key) {
-		int k = search(key);
-		if(k>= 0 && k!=nitems-1)
-			this.items[k] = this.items[nitems-1];
-		nitems--;
-		return (k>=0);
-	}
-	
-	int size() {
-		return this.nitems;
-	}
-	
-	public static void main(String[] args) {
-		Item item1 = new Item("Max", "313-867-5309");
-		Item item2 = new Item("Tim", "111-111-1111");
-		Item item3 = new Item("Jim", "222-222-2222");
-		Storage storage = new Storage(1000);
-		storage.put(item1);
-		storage.put(item2);
-		storage.put(item3);
-		System.out.println(storage.size());
-		System.out.println(storage.get("Tim"));
-		storage.delete("Tim");
-		System.out.println(storage.get("Tim"));
-		System.out.println(storage.get("Alex"));
-		System.out.println(storage.has("Tim"));
-		
-		/*int sum = 0;
-		Scanner sc = new Scanner(System.in);
-		
-		while(sc.hasNextInt()) {
-			sum += sc.nextInt();
-			System.out.println(sum);
+		Node p = search(key);
+		if(p!=null) {
+			Node prev = p.prev;
+			if(prev!=null){
+				prev.next = p.next;
+			} else {
+				start = p.next;
+			}
+			if(p.next!=null) p.next.prev = prev;		
+			return true;
 		}
-		*/
+		return false;
+	}
+	int size() {
+		return this.nnodes;
+	}
+
+	public static void main(String[] args) {
+
+		Item first = new Item("Michael", "12");
+		Item second = new Item("Stanley", "4");
+		Item third = new Item("Andrew", "17");
+		Item fourth = new Item("Perry", "13");
+
+		Storage numbers = new Storage();
+
+		numbers.put(first);
+		numbers.put(second);
+		numbers.put(third);
+		numbers.put(fourth);
+
+		numbers.delete(numbers.start.item.key);
+		System.out.println(numbers.start.item.key);
+
+		/*
+	 int sum=0;
+
+	 Scanner sc = new Scanner(System.in);
+
+	 while(sc.hasNextInt()) {
+	     sum += sc.nextInt();
+	     System.out.println(sum);
+	 }
+		 */
 	}
 }
